@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% set nav='driver' %}
+{% set i18n='off' %}
+{% block title %}Driver{% endblock %}
+{% block body %}
+<div class="wrap narrow">
+  <div class="row between wrapx" style="margin-bottom:14px">
+    <div><h1 style="font-size:28px">🚑 Ambulance driver</h1><div class="mut">Your assignment, patient photo and one-tap navigation.</div></div>
+    <select id="asel" style="width:auto;min-width:200px"></select>
+  </div>
+  <div id="status" class="status-hero off"></div>
+  <div class="card" style="padding:0;overflow:hidden;margin-top:14px"><div id="map" class="mapbox tall" style="border:0;border-radius:0"></div></div>
+  <div id="job" class="col" style="margin-top:14px"></div>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/driver.js') }}"></script>{% endblock %}

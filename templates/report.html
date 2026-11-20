@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% set nav='report' %}
+{% block title %}Report emergency{% endblock %}
+{% block body %}
+{% set icons = {'road':'🚗','fall':'🤕','assault':'🔪','fire':'🔥','heart':'❤️','stroke':'🧠','pregnancy':'🤰','breathing':'🫁','other':'⚕️'} %}
+<div class="wrap narrow">
+  <div class="row between wrapx" style="margin-bottom:16px">
+    <div><h1 style="font-size:30px">Report an emergency</h1><div class="mut">Takes under a minute. Photo is optional but helps the crew &amp; hospital prepare.</div></div>
+    <a class="btn red" href="tel:112">📞 Call 112 now</a>
+  </div>
+
+  <form id="f" autocomplete="off">
+    <input type="text" name="website" tabindex="-1" style="position:absolute;left:-9999px" aria-hidden="true">
+
+    <div class="card sec">
+      <h3><span class="num">1</span> What happened?</h3>
+      <div class="tiles" id="tiles">
+        {% for k, v in incidents.items() %}<div class="tile" data-k="{{ k }}"><span class="e">{{ icons[k] }}</span>{{ v.label }}</div>{% endfor %}
+      </div>
+    </div>
+
+    <div class="card sec">
+      <h3><span class="num">2</span> Photo of the scene <span class="badge bs info">AI injury detection</span></h3>
+      <div id="dropzone" class="drop">
+        <div class="big">📸</div>
+        <div style="font-weight:700;margin:6px 0 2px">Take a photo or upload one</div>
+        <small>Only photograph if it is safe. Your photo is shared with the ambulance crew and receiving hospital.</small>
+        <div class="row wrapx" style="justify-content:center;margin-top:14px">
+          <button type="button" class="btn teal" id="btnCam">📷 Take photo</button>
+          <button type="button" class="btn" id="btnGal">🖼 Choose from gallery</button>
+        </div>
+      </div>
+      <input type="file" id="fileCam" accept="image/*" capture="environment" hidden>
+      <input type="file" id="fileGal" accept="image/*" hidden>
+      <div id="previewWrap" style="display:none">
+        <div class="preview"><img id="preview" alt="Incident photo"><div class="scan" id="scan"></div></div>
+        <div id="finding"></div>
+        <button type="button" class="btn sm ghost" id="btnRetake" style="margin-top:10px">↻ Remove / retake</button>
+      </div>
+    </div>
+
+    <div class="card sec">
+      <h3><span class="num">3</span> Quick questions</h3>
+      <div class="col">
+        <div><label class="f">Is the person awake &amp; responding?</label>
+          <div class="pills" data-g="conscious"><div class="pill on" data-v="Alert">Yes, responding</div><div class="pill" data-v="Confused">Confused / drowsy</div><div class="pill warn" data-v="Unresponsive">Not responding</div></div></div>
+        <div><label class="f">Breathing</label>
+          <div class="pills" data-g="breathing"><div class="pill on" data-v="Normal">Normal</div><div class="pill" data-v="Difficult">Struggling to breathe</div><div class="pill warn" data-v="None">Not breathing</div></div></div>
+        <div><label class="f">Bleeding</label>
+          <div class="pills" data-g="bleeding"><div class="pill on" data-v="None">None</div><div class="pill" data-v="Some">Some</div><div class="pill warn" data-v="Heavy">Heavy / won't stop</div></div></div>
+        <div><label class="f">Age of patient</label>
+          <div class="pills" data-g="age_group"><div class="pill" data-v="child">Child (under 16)</div><div class="pill on" data-v="adult">Adult</div><div class="pill" data-v="elderly">Elderly (65+)</div></div></div>
+
+        <div id="c-stroke" style="display:none"><label class="f">Stroke signs (FAST)</label>
+          <div class="pills"><div class="pill tg" data-n="fast_face">Face drooping</div><div class="pill tg" data-n="fast_arm">Arm weakness</div><div class="pill tg" data-n="fast_speech">Speech slurred</div></div>
+          <div style="margin-top:8px"><label class="f">Minutes since symptoms started (approx.)</label><input type="number" id="onset_min" min="0" max="5000" value="30"></div></div>
+        <div id="c-preg" style="display:none"><label class="f">Pregnancy</label><div class="pills"><div class="pill tg" data-n="imminent_delivery">Baby is coming now</div></div></div>
+        <div id="c-fire" style="display:none"><label class="f">Fire</label><div class="pills"><div class="pill tg warn" data-n="inhalation">Smoke inhaled / face burned</div></div></div>
+      </div>
+    </div>
+
+    <div class="card sec">
+      <h3><span class="num">4</span> Where are you?</h3>
+      <div class="row wrapx" style="margin-bottom:10px"><button type="button" class="btn teal sm" id="btnGps">📍 Use my live location</button><span id="locTxt" class="mut" style="font-size:13px">Tap the map to place the pin</span></div>
+      <div class="searchbox"><input type="text" id="q" placeholder="Search area, landmark or address…" autocomplete="off"><div id="qres" class="qres" style="display:none"></div></div>
+      <div id="map" class="mapbox"></div>
+      <div id="outside" class="finding bad" style="display:none;margin-top:10px"></div>
+      <div style="margin-top:10px"><label class="f">Landmark / address (optional)</label><input type="text" id="place" maxlength="80" placeholder="e.g. opposite D-Mart, Chinchwad"></div>
+    </div>
+
+    <div class="card sec">
+      <h3><span class="num">5</span> Your contact <small>(so the crew can reach you)</small></h3>
+      <div class="grid g2"><div><label class="f">Name</label><input type="text" id="name" maxlength="60"></div><div><label class="f">Phone</label><input type="tel" id="phone" maxlength="20" placeholder="+91…"></div></div>
+      <div style="margin-top:10px"><label class="f">Anything else? (optional)</label><textarea id="notes" rows="2" maxlength="300" placeholder="e.g. two cars collided, one driver trapped"></textarea></div>
+    </div>
+
+    <button class="btn red lg block" id="send" style="font-size:20px;padding:18px">🆘 SEND SOS</button>
+    <p class="disclaimer" style="margin-top:12px">By sending, you share your location, photo and phone number with emergency responders. This is a demo network – it does not contact real services.</p>
+  </form>
+</div>
+
+<div class="overlay" id="ov" style="display:none"><div class="ovbox">
+  <h2 id="ovh">Sending SOS…</h2>
+  <div class="prog" id="prog">
+    <div data-s="0"><span class="spin"></span> Analysing photo for injuries</div>
+    <div data-s="1"><span class="spin"></span> Calculating priority (triage)</div>
+    <div data-s="2"><span class="spin"></span> Picking nearest ambulance</div>
+    <div data-s="3"><span class="spin"></span> Alerting best hospital</div>
+  </div>
+</div></div>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/report.js') }}"></script>{% endblock %}

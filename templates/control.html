@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% set nav='control' %}
+{% set i18n='off' %}
+{% block title %}Control room{% endblock %}
+{% block body %}
+<div class="cr">
+  <div class="mapcol">
+    <div class="kpis">
+      <div class="kpi" id="k-active"><b>–</b><span>Active cases</span></div>
+      <div class="kpi" id="k-p1"><b>–</b><span>P1 critical</span></div>
+      <div class="kpi" id="k-await"><b>–</b><span>Awaiting hospital</span></div>
+      <div class="kpi" id="k-amb"><b>–</b><span>Ambulances free</span></div>
+      <div class="kpi" id="k-hosp"><b>–</b><span>Hospitals online</span></div>
+      <div class="kpi" id="k-load"><b>–</b><span>Network load</span></div>
+    </div>
+    <div id="map" class="mapbox full"></div>
+    <div class="simbar">
+      <div class="clock mono" id="clock">--:--:--</div>
+      <select id="speed" style="width:auto;padding:7px 10px"><option value="1">1× real time</option><option value="5">5×</option><option value="10" selected>10× demo</option><option value="30">30×</option><option value="60">60×</option><option value="120">120×</option></select>
+      <button class="btn sm" id="pause">⏸ Pause</button>
+      <button class="btn sm" id="mode" title="Who answers hospital approval requests?">🏥 …</button>
+      <button class="btn sm red" id="surge">⚠ Surge ×6</button>
+      <button class="btn sm ghost" id="reset">↺ Reset</button>
+    </div>
+  </div>
+  <div class="side">
+    <div class="tabs" id="tabs">
+      <button class="tab on" data-t="cases">Cases <span class="n" id="n-cases" style="display:none"></span></button>
+      <button class="tab" data-t="hospitals">Hospitals</button>
+      <button class="tab" data-t="fleet">Fleet</button>
+      <button class="tab" data-t="analytics">Analytics</button>
+      <button class="tab" data-t="log">Log</button>
+    </div>
+    <div class="pane" id="pane"></div>
+  </div>
+</div>
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer"></aside>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/chart.umd.js') }}"></script>
+<script src="{{ url_for('static', filename='js/control.js') }}"></script>
+{% endblock %}

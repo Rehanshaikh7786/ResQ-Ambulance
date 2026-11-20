@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% set nav='home' %}
+{% block body %}
+<div class="wrap">
+  <div id="active" class="card glow" style="display:none;margin-top:6px"></div>
+  <section class="hero">
+    <div>
+      <span class="badge bp1">● LIVE EMERGENCY NETWORK</span>
+      <h1 style="margin-top:14px">Send a photo.<br><em>Get help in the golden hour.</em></h1>
+      <p>Snap the scene. Our system detects injuries from the photo, picks the nearest ambulance, alerts the best-equipped hospital — and the moment the hospital approves, the ambulance is sent urgently. Track it live on the map.</p>
+      <div class="row wrapx">
+        <a class="btn red lg" href="/report">🆘 Report an emergency</a>
+        <a class="btn lg ghost" href="/control">Open control room →</a>
+      </div>
+      <p class="disclaimer" style="margin-top:18px">Academic decision-support prototype running on a simulated Pune / Pimpri-Chinchwad network. In a real emergency always call <b>112</b> (or <b>108</b> for ambulance in India).</p>
+    </div>
+    <a href="/report" class="sosbtn" aria-label="Report emergency"><span>SOS<small>TAP TO REPORT</small></span></a>
+  </section>
+
+  <h2 style="margin:26px 0 14px">How it works</h2>
+  <div class="flow">
+    <div class="s"><span class="i">📸</span><b>1 · Photo + GPS</b><small>Bystander sends a photo of the incident with live location.</small></div>
+    <div class="s"><span class="i">🧠</span><b>2 · Injury detection</b><small>AI vision finds bleeding, burns, hazards. Triage P1–P4 is calculated.</small></div>
+    <div class="s"><span class="i">🚑</span><b>3 · Nearest ambulance</b><small>Closest suitable unit is picked first and held in reserve.</small></div>
+    <div class="s"><span class="i">🏥</span><b>4 · Hospital alerted</b><small>Best hospital by capability, beds, ICU, specialists and ETA gets the case + photo.</small></div>
+    <div class="s"><span class="i">✅</span><b>5 · Approve → dispatch</b><small>On approval the ambulance goes urgently. Decline or timeout → next hospital.</small></div>
+    <div class="s"><span class="i">📍</span><b>6 · Live tracking</b><small>Google Maps tracking for the caller, control room, hospital and driver.</small></div>
+  </div>
+
+  <h2 style="margin:34px 0 14px">Choose your console</h2>
+  <div class="grid g4">
+    <a class="card role" href="/report"><div class="ic">🆘</div><h3 style="margin-top:8px">Citizen</h3><small>Report with photo, get live ETA and first-aid guidance.</small></a>
+    <a class="card role" href="/control"><div class="ic">🛰️</div><h3 style="margin-top:8px">Control room</h3><small>Live map, approvals, fleet, hospitals, analytics, surge simulator.</small></a>
+    <a class="card role" href="/hospital"><div class="ic">🏥</div><h3 style="margin-top:8px">Hospital desk</h3><small>Review photo + triage, approve or decline, manage beds.</small></a>
+    <a class="card role" href="/driver"><div class="ic">🚑</div><h3 style="margin-top:8px">Ambulance driver</h3><small>Assignment, patient photo, one-tap Google Maps navigation.</small></a>
+  </div>
+</div>
+<div class="foot">GoldenHour SOS · decision-support prototype · not clinically validated · photo analysis never replaces a paramedic's assessment</div>
+{% endblock %}
+{% block scripts %}
+<script>
+(async () => {
+  let code = null; try { code = localStorage.getItem('sos_last'); } catch (e) {}
+  if (!code) return;
+  try {
+    const c = await api('/api/track/' + code);
+    if (['completed', 'cancelled'].includes(c.status)) return;
+    const b = $('#active'); b.style.display = 'block';
+    b.innerHTML = `<div class="row between wrapx"><div><b>🚨 Your emergency ${esc(c.id)} is active</b><br><small>${statusBadge(c.status)} ${c.eta_remaining_min != null ? '· ambulance ETA ' + fmtMin(c.eta_remaining_min) : ''}</small></div><a class="btn red" href="/track/${esc(c.id)}">Track live →</a></div>`;
+  } catch (e) {}
+})();
+</script>
+{% endblock %}

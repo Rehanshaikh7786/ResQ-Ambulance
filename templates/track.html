@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% set nav='report' %}
+{% block title %}Tracking {{ code }}{% endblock %}
+{% block body %}
+<div class="wrap">
+  <div class="row between wrapx" style="margin-bottom:14px">
+    <div><span class="mut">Emergency</span> <b class="mono" style="font-size:20px">{{ code }}</b> <span id="prio"></span></div>
+    <div class="row wrapx"><button class="btn sm" id="notif">🔔 Notify me</button><button class="btn sm" id="share">🔗 Share tracking link</button><a class="btn sm red" href="tel:112">📞 112</a></div>
+  </div>
+  <div id="notfound" class="card" style="display:none"><h3>Report not found</h3><p class="mut">Check the link, or start a new report.</p><a class="btn red" href="/report">New report</a></div>
+
+  <div id="main" class="grid" style="grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start">
+    <div class="col">
+      <div id="hero" class="status-hero wait"></div>
+      <div class="card" style="padding:0;overflow:hidden"><div id="map" class="mapbox tall" style="border:0;border-radius:0"></div></div>
+      <div class="card" id="ambcard" style="display:none"></div>
+      <div class="card" id="aidcard"><h3>🩺 What to do until help arrives</h3><div id="aid"></div>
+        <button class="btn sm" id="metro" style="margin-top:8px">🫀 Start CPR metronome (110/min)</button></div>
+    </div>
+    <div class="col">
+      <div class="card"><h3>Progress</h3><ul class="steps" id="steps"></ul></div>
+      <div class="card" id="photocard" style="display:none"><h3>📸 Photo analysis</h3><div id="photo"></div></div>
+      <div class="card"><h3>Live log</h3><div class="timeline" id="log"></div></div>
+      <button class="btn block" id="cancel" style="display:none">Cancel this emergency</button>
+    </div>
+  </div>
+</div>
+<style>@media(max-width:900px){ #main{grid-template-columns:1fr!important}}</style>
+{% endblock %}
+{% block scripts %}<script>window.CODE = {{ code|tojson }};</script><script src="{{ url_for('static', filename='js/track.js') }}"></script>{% endblock %}

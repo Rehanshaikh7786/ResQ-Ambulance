@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="wrap narrow">
+  <div class="card" style="max-width:380px;margin:60px auto">
+    <h2>Staff sign-in</h2>
+    <p class="mut">Control room, hospital desk and driver consoles are protected by a PIN.</p>
+    <form method="post" class="col">
+      <input type="password" name="pin" placeholder="Staff PIN" autofocus style="width:100%;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:11px;padding:11px 13px;color:inherit">
+      {% if err %}<div class="badge bp1">{{ err }}</div>{% endif %}
+      <button class="btn red block">Sign in</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

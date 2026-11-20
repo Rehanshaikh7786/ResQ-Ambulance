@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% set nav='hospital' %}
+{% set i18n='off' %}
+{% block title %}Hospital desk{% endblock %}
+{% block body %}
+<div class="wrap">
+  <div class="row between wrapx" style="margin-bottom:14px">
+    <div><h1 style="font-size:28px">🏥 Hospital emergency desk</h1><div class="mut">Review incoming cases with the scene photo, then approve or decline. Approval sends the ambulance urgently.</div></div>
+    <select id="hsel" style="width:auto;min-width:260px"></select>
+  </div>
+  <div id="modebar" class="finding" style="display:none;margin-bottom:14px"></div>
+  <div class="grid" style="grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);align-items:start" id="hgrid">
+    <div>
+      <h2 style="font-size:19px;margin-bottom:10px">Awaiting your decision <span class="badge bp1" id="pcount">0</span></h2>
+      <div id="pending"><div class="empty card">No pending alerts. New emergencies appear here with a sound alert.</div></div>
+      <h2 style="font-size:19px;margin:22px 0 10px">Inbound patients</h2>
+      <div id="inbound"></div>
+    </div>
+    <div class="col" id="side"></div>
+  </div>
+</div>
+<style>@media(max-width:900px){ #hgrid{grid-template-columns:1fr!important}}</style>
+{% endblock %}
+{% block scripts %}<script src="{{ url_for('static', filename='js/hospital.js') }}"></script>{% endblock %}
